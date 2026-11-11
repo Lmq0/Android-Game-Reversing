@@ -19,11 +19,14 @@ This repository documents a hands-on journey of reverse-engineering a mobile gam
 
 ### 1.1 First Attempt: App-Layer Injection (Failed)
 To understand the game's logic, the first logical step was to use an App-layer capture tool (which injects a hook into the target process to intercept Socket APIs directly).
+
 <img src="images/app-layer.png" alt="App-Layer Injection Crash" width="600">
 *   **Symptom**:
     *   When attempting to hook the game by **restarting the target app** (`Restart Target App` enabled), the client would instantly freeze on a black screen and refuse to launch. This indicated that the injection process itself was detected during the early startup phase.
     *   When attempting to attach to the **already running process** (without restarting), the injection failed entirely, returning an error (`target_app_not_running`). The game's anti-debugging module actively blocked the hooking attempt.
-       <img src="images/App-layer-defeat.png" alt="App-Layer Injection Crash" width="600">
+    
+<img src="images/App-layer-defeat.png" alt="App-Layer Injection Crash" width="600">
+
 *   **Analysis**: The game employs robust anti-debugging and anti-injection mechanisms. Upon launching, it scans its own process memory. Detecting the injected capture module (e.g., Frida agent), the game triggered a self-protection routine and terminated itself.
 
 ### 1.2 Second Attempt: Raw NIC Capture (Successful but Limited)
@@ -31,6 +34,14 @@ Since the process rejected injection, the next approach was **Raw NIC (Network I
 
 *   **Result**: We successfully intercepted raw TCP/IP traffic (specifically on Port `22158`). We discovered the game used a long-polling raw TCP connection instead of standard HTTP.
 *   **Limitation**: Raw capture provides the "what" (the raw bytes), but not the "meaning". While unencrypted custom text protocols (like Heartbeats) were readable, critical business logic packets appeared only as unreadable ciphertext. The packet header started with `78 9C` (a Zlib compression header), but attempts to decompress failed (`unsupported compression method`). This indicated the data was **first Zlib-compressed, then wrapped in an additional layer of AES or custom encryption**.
+
+*   **Some readable information**：Heartbeat and Attack information.
+<img src="images/attack.png" alt="App-Layer Injection Crash" width="600">
+
+<img src="images/heartbeat.png" alt="App-Layer Injection Crash" width="600">
+*   **Some of them are absolutely not readabel.
+
+<img src="images/unreadable.png" alt="App-Layer Injection Crash" width="600">
 
 ### 1.3 Third Attempt: System HTTP Proxy (The Breakthrough)
 Since we couldn't decrypt the custom protocol immediately, we analyzed the traffic fingerprint and found that the game mixed network architectures. Certain APIs (like Login and Recharge) actually used standard HTTPS.
