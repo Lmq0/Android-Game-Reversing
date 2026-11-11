@@ -40,15 +40,12 @@ Since the process rejected injection, the next approach was **Raw NIC (Network I
 *   **Limitation**: Raw capture provides the "what" (the raw bytes), but not the "meaning". While unencrypted custom text protocols (like Heartbeats) were readable, critical business logic packets appeared only as unreadable ciphertext. The packet header started with `78 9C` (a Zlib compression header), but attempts to decompress failed (`unsupported compression method`). This indicated the data was **first Zlib-compressed, then wrapped in an additional layer of AES or custom encryption**.
 
 *   **Some readable information**：Heartbeat and Attack information.
-<img src="images/attack.png" alt="App-Layer Injection Crash" width="600">
-<img src="images/heartbeat.png" alt="App-Layer Injection Crash" width="600">
-
 <div align="center">
   <img src="images/attack.png" alt="Attack" width="600" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
   <img src="images/heartbeat.png" alt="heartbeat" width="600" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
 </div>
-*   **Some of them are absolutely not readable**：
 
+*   **Some of them are absolutely not readable**: 
  <div align="center">
   <img src="images/unreadable.png" alt="unreadable" width="600" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
 </div>
