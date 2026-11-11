@@ -35,11 +35,11 @@ Since the process rejected injection, the next approach was **Raw NIC (Network I
 *   **Result**: We successfully intercepted raw TCP/IP traffic (specifically on Port `22158`). We discovered the game used a long-polling raw TCP connection instead of standard HTTP.
 *   **Limitation**: Raw capture provides the "what" (the raw bytes), but not the "meaning". While unencrypted custom text protocols (like Heartbeats) were readable, critical business logic packets appeared only as unreadable ciphertext. The packet header started with `78 9C` (a Zlib compression header), but attempts to decompress failed (`unsupported compression method`). This indicated the data was **first Zlib-compressed, then wrapped in an additional layer of AES or custom encryption**.
 
-*   **Some readable information**：Heartbeat and Attack information.
+   **Some readable information**：Heartbeat and Attack information.
 <img src="images/attack.png" alt="App-Layer Injection Crash" width="600">
 
 <img src="images/heartbeat.png" alt="App-Layer Injection Crash" width="600">
-*   **Some of them are absolutely not readabel.
+   **Some of them are absolutely not readable**:
 
 <img src="images/unreadable.png" alt="App-Layer Injection Crash" width="600">
 
