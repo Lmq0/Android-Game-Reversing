@@ -70,7 +70,9 @@ To perform App-layer injection and bypass SSL Pinning, standard Root privileges 
     3.  **Configuring the Routing (KSU WebUI)**: Used **KSU WebUI** to manage the Zygisk Next settings. Enabled "Anonymous Memory" to hide the injected modules from memory scans.
     4.  **DenyList Enforcement**: Added the target game package to the Magisk DenyList. This prevents the game from seeing the Root environment and the injected Xposed/LSPosed frameworks during its initial integrity check.
 *   **The Outcome**: Despite the heavy stealth setup, the game's anti-injection mechanism was still too aggressive. When the App-layer capture tool attempted to attach to the running process, the game detected the hook and killed itself (`target_app_not_running`). We had to abandon App-layer injection and switch to Raw NIC capture.
-
+ <div align="center">
+  <img src="images/zygisk.png" alt="zigisk" width="600" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+</div>
 ### 2.2 Bypassing SSL Pinning (LSPosed + TrustMeAlready)
 Even with a stealth Root environment, the HTTP Proxy mode failed in log-in process because the game implemented **SSL Pinning**. The client strictly validates the server's certificate fingerprint and refuses to trust user-installed CA certificates.
 
@@ -102,14 +104,68 @@ By filtering the capture with `tcp.port == 22158`, we observed a distinct commun
 
 1.  **Heartbeat Mechanism**: Every ~10 seconds, the client and server exchanged extremely small payloads (around 16 bytes).
 2.  **Custom Text Protocol**: By extracting the raw TCP Payload and converting it from Hex to ASCII, a surprising discovery was made. The game **uses a custom, HTTP-like text protocol**. Despite running over raw TCP, the payload mimics a URL-encoded format:
-    ```text
-    bv=99.0.0&request=[{"func":"HeartBeat","time":1794227766}]&seq=393&session=xxxx
-    ```
-**Protocol Field Breakdown:**
-*   `bv`: Client version.
-*   `request`: A JSON array containing the functional command (e.g., `HeartBeat`).
-*   `seq`: A sequence number used for anti-replay protection.
-*   `session`: The player's authentication token.
+
+### 3.3 Payload Extraction & JSON Transformation
+
+While the heartbeat packet was simple, capturing the actual battle and reward data resulted in massive Hex dumps (`attack.bin`, `pet_update.bin`). These raw files contained a mix of Ethernet headers, IP/TCP headers, and application-layer payloads. 
+
+To make sense of the data, we built a Python-based data extraction pipeline to transform these messy raw Hex dumps into structured JSON.
+
+#### 1. The Data Cleaning Challenge
+Exporting the raw Hex to text introduced several issues:
+*   **Encoding Traps**: The text files were saved in UTF-16 (common with Windows/PowerShell), filling the file with invisible null characters (`\x00`) between every letter.
+*   **Visual Noise**: The Hex dumps contained memory offset addresses on the left (`00000000`) and ASCII character previews on the right (`RT..5..`), which polluted the regex parsing.
+*   **URL Encoding**: The actual application data was wrapped in standard URL percent-encoding (e.g., `%22`, `%7B`).
+
+#### 2. Python Extraction Script
+We wrote a script (`hex_to_json.py`) to automate the extraction. The core logic involves:
+1.  Stripping all `\x00` null bytes to fix encoding issues.
+2.  Using Regex (`\b[0-9A-Fa-f]{2}\b`) to vacuum up valid 2-byte hex pairs, ignoring the addresses and ASCII noise.
+3.  Decoding the Hex stream to ASCII, locating the `bv=` signature to drop the TCP headers.
+4.  Using `urllib.parse.unquote` to decode the URL-encoded string and `json.loads()` to format it perfectly.
+
+# 3. Decode to JSON
+raw_text = bytes.fromhex(hex_string).decode('ascii', errors='ignore')
+payload_str = raw_text[raw_text.find('bv='):]
+decoded_payload = urllib.parse.unquote(payload_str)
+# ... (extract JSON and dump to file)
+# For example：
+```json
+[
+    {
+        "fightInfo": {
+            "actionList": [
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 0,
+                    "skillId": 0,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 1,
+                    "skillId": 11,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 3,
+                    "skillId": 204611,
+                    "sourceId": 102020461
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 4,
+                    "skillId": 12,
+                    "sourceId": 0
+                },
+
+
+```
 
 ### 3.3 Encryption Detection (The Limitation)
 
