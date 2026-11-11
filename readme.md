@@ -6,15 +6,6 @@ This repository documents a hands-on journey of reverse-engineering a mobile gam
 
 ---
 
-## 📑 Table of Contents
-1. [Network Architecture & Capture Limitations](#1-network-architecture--capture-limitations)
-2. [Environment Setup & Anti-Detection Bypass](#2-environment-setup--anti-detection-bypass)
-3. [Packet Capture: Raw NIC Mode & TCP Reassembly](#3-packet-capture-raw-nic-mode--tcp-reassembly)
-4. [Custom Private Protocol Reverse Engineering](#4-custom-private-protocol-reverse-engineering)
-5. [Analysis Scripts](#5-analysis-scripts)
-
----
-
 ## 1. Initial Troubleshooting & Capture Limitations
 
 ### 1.1 First Attempt: App-Layer Injection (Failed)
@@ -87,6 +78,7 @@ Even with a stealth Root environment, the HTTP Proxy mode failed in log-in proce
 *   **The Root Cause**: The injection tool attempted to hook the app during its startup phase. The game's anti-injection module detected the hook attempt and immediately killed the process.
 *   **The Workaround**: We bypassed the instant-launch injection. Instead of hooking the app at startup, we let the game fully load to the login screen, then manually triggered the App-layer capture. With the Kitsune Mask DenyList and Zygisk Next active, the game failed to detect the late-stage injection, allowing us to intercept the Socket traffic successfully.
 
+---
 
 ## 3. Packet Capture: Raw NIC Mode & TCP Reassembly
 
@@ -166,11 +158,13 @@ decoded_payload = urllib.parse.unquote(payload_str)
 
 ```
 
-### 3.4 MITM Proxy Configuration & SSL Pinning Bypass
+---
+
+## 4. MITM Proxy Configuration & SSL Pinning Bypass
 
 While raw NIC capture allowed us to see the raw TCP streams, decrypting standard HTTPS traffic (like login and recharge) required setting up an HTTP Proxy (Man-in-the-Middle).
 
-#### 1. Emulator Network Configuration
+### 1. Emulator Network Configuration
 To route the emulator's traffic through the proxy tool (e.g., TraceEagle or Burp Suite) on the host PC:
 1.  In the emulator's Android settings, navigate to **Network & Internet -> Wi-Fi**.
 2.  Modify the connected Wi-Fi network (e.g., `WiredSSID`).
@@ -181,7 +175,7 @@ To verify and clear the proxy when done:
 adb shell settings put global http_proxy :0
 ```
 
-#### 2. The MITM Certificate Mechanism
+### 2. The MITM Certificate Mechanism
 Even with the proxy configured, the game uses HTTPS. The proxy acts as a "Man-in-the-Middle" to decrypt the traffic. However, the game strictly verifies the server's certificate (SSL Pinning), rejecting the proxy's fake certificate. 
 
 The diagram below illustrates the MITM interception process:
