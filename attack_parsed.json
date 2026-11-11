@@ -1,0 +1,223 @@
+[
+    {
+        "fightInfo": {
+            "actionList": [
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 0,
+                    "skillId": 0,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 1,
+                    "skillId": 11,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 3,
+                    "skillId": 204611,
+                    "sourceId": 102020461
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 4,
+                    "skillId": 12,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 4,
+                    "skillId": 215511,
+                    "sourceId": 302021551
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 0,
+                    "skillId": 0,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 1,
+                    "skillId": 11,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 1,
+                    "skillId": 204611,
+                    "sourceId": 102020461
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 2,
+                    "skillId": 12,
+                    "sourceId": 0
+                },
+                {
+                    "actionPara": [],
+                    "resultList": [],
+                    "round": 2,
+                    "skillId": 215511,
+                    "sourceId": 302021551
+                }
+            ],
+            "actorList": [],
+            "attackerPet": {
+                "paraList": [
+                    7218,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                "petIdList": [
+                    1,
+                    2,
+                    6
+                ],
+                "petList": [
+                    {
+                        "petAttr": [
+                            394,
+                            97,
+                            150,
+                            35,
+                            49,
+                            515,
+                            1000,
+                            0,
+                            50,
+                            0,
+                            111,
+                            20461,
+                            0,
+                            1830,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1000,
+                            394,
+                            2
+                        ],
+                        "petId": 20461,
+                        "skillId": [
+                            20210,
+                            204610,
+                            204611
+                        ],
+                        "skillLevel": [
+                            1,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "petAttr": [
+                            583,
+                            90,
+                            107,
+                            61,
+                            64,
+                            506,
+                            1000,
+                            0,
+                            50,
+                            0,
+                            108,
+                            20641,
+                            0,
+                            1964,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            583,
+                            0
+                        ],
+                        "petId": 20641,
+                        "skillId": [
+                            206411,
+                            206410,
+                            20411
+                        ],
+                        "skillLevel": [
+                            1,
+                            1,
+                            1
+                        ]
+                    },
+                    {
+                        "petAttr": [
+                            927,
+                            168,
+                            201,
+                            86,
+                            89,
+                            511,
+                            1000,
+                            0,
+                            50,
+                            0,
+                            1502,
+                            21551,
+                            0,
+                            3424,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1060,
+                            896,
+                            2
+                        ],
+                        "petId": 21551,
+                        "skillId": [
+                            20290,
+                            215511,
+                            215510
+                        ],
+                        "skillLevel": [
+                            1,
+                            7,
+                            1
+                        ]
+                    }
+                ]
+            },
+            "battleTime": 1794391573,
+            "battleType": 1,
+            "damage": 597,
+            "defenderPet": {
+                "paraList": [],
+                "petIdList": [],
+                "petList": []
+            },
+            "fightId": "",
+            "levelId": 101103,
+            "lua": 2025050700,
+            "result": 36,
+            "type": 0
+        },
+        "func": "InstanceFight"
+    }
+]
