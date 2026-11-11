@@ -39,7 +39,7 @@ Since the process rejected injection, the next approach was **Raw NIC (Network I
 <img src="images/attack.png" alt="App-Layer Injection Crash" width="600">
 
 <img src="images/heartbeat.png" alt="App-Layer Injection Crash" width="600">
-   **Some of them are absolutely not readable**:
+   **Some of them are absolutely not readable**：
 
 <img src="images/unreadable.png" alt="App-Layer Injection Crash" width="600">
 
