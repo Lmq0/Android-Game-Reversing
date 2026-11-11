@@ -111,25 +111,24 @@ While the heartbeat packet was simple, capturing the actual battle and reward da
 
 To make sense of the data, we built a Python-based data extraction pipeline to transform these messy raw Hex dumps into structured JSON.
 
-#### 1. The Data Cleaning Challenge
+##### 1. The Data Cleaning Challenge
 Exporting the raw Hex to text introduced several issues:
 *   **Encoding Traps**: The text files were saved in UTF-16 (common with Windows/PowerShell), filling the file with invisible null characters (`\x00`) between every letter.
 *   **Visual Noise**: The Hex dumps contained memory offset addresses on the left (`00000000`) and ASCII character previews on the right (`RT..5..`), which polluted the regex parsing.
 *   **URL Encoding**: The actual application data was wrapped in standard URL percent-encoding (e.g., `%22`, `%7B`).
 
-#### 2. Python Extraction Script
+##### 2. Python Extraction Script
 We wrote a script (`hex_to_json.py`) to automate the extraction. The core logic involves:
 1.  Stripping all `\x00` null bytes to fix encoding issues.
 2.  Using Regex (`\b[0-9A-Fa-f]{2}\b`) to vacuum up valid 2-byte hex pairs, ignoring the addresses and ASCII noise.
 3.  Decoding the Hex stream to ASCII, locating the `bv=` signature to drop the TCP headers.
 4.  Using `urllib.parse.unquote` to decode the URL-encoded string and `json.loads()` to format it perfectly.
 
-# 3. Decode to JSON
+#### 3. Decode to JSON
 raw_text = bytes.fromhex(hex_string).decode('ascii', errors='ignore')
 payload_str = raw_text[raw_text.find('bv='):]
 decoded_payload = urllib.parse.unquote(payload_str)
-# ... (extract JSON and dump to file)
-# For example：
+## For example：
 ```json
 [
     {
