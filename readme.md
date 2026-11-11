@@ -19,8 +19,11 @@ This repository documents a hands-on journey of reverse-engineering a mobile gam
 
 ### 1.1 First Attempt: App-Layer Injection (Failed)
 To understand the game's logic, the first logical step was to use an App-layer capture tool (which injects a hook into the target process to intercept Socket APIs directly).
-
-*   **Symptom**: The moment the injection tool attached to the game process, the client instantly froze (black screen) and crashed.
+<img src="images/app-layer.png" alt="App-Layer Injection Crash" width="600">
+*   **Symptom**:
+    *   When attempting to hook the game by **restarting the target app** (`Restart Target App` enabled), the client would instantly freeze on a black screen and refuse to launch. This indicated that the injection process itself was detected during the early startup phase.
+    *   When attempting to attach to the **already running process** (without restarting), the injection failed entirely, returning an error (`target_app_not_running`). The game's anti-debugging module actively blocked the hooking attempt.
+       <img src="images/app-layer-defeat.png" alt="App-Layer Injection Crash" width="600">
 *   **Analysis**: The game employs robust anti-debugging and anti-injection mechanisms. Upon launching, it scans its own process memory. Detecting the injected capture module (e.g., Frida agent), the game triggered a self-protection routine and terminated itself.
 
 ### 1.2 Second Attempt: Raw NIC Capture (Successful but Limited)
